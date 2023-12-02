@@ -2,8 +2,10 @@ import { useState, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import Editor from '@monaco-editor/react'
 import * as Y from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
+import { WebsocketProvider} from 'y-websocket'
 import { MonacoBinding } from 'y-monaco'
+import { WEBSOCKET_URL } from '/websocketConfig.js'; // Adjust the path as needed
+
 
 // Setup Monaco Editor
 // Attach YJS Text to Monaco Editor
@@ -21,8 +23,8 @@ function App() {
         editorRef.current = editor
         // Initialize YJS
         const doc = new Y.Doc() // a collection of shared objects -> Text
-        // Connect to peers (or start connection) with WebRTC
-        const provider = new WebrtcProvider('test-room', doc) // room1, room2
+        // Connect to server (or start connection) with WebSocket
+        const provider = new WebsocketProvider(WEBSOCKET_URL,'asos-room', doc)
         const type = doc.getText('monaco') // doc { "monaco": "what our IDE is showing" }
         // Bind YJS to Monaco
         const binding = new MonacoBinding(
@@ -31,7 +33,17 @@ function App() {
             new Set([editorRef.current]),
             provider.awareness
         )
-        console.log(provider.awareness)
+        //// tu sa zobrazuju informacie o aktualnom dokumente, userIds
+        // console.log(provider.awareness)
+        //
+        // // Listens for awareness changes from other clients
+        // provider.awareness.on('change', changes => {
+        //     // The new awareness state changes
+        //     changes;
+        //     // Complete map of awareness states, in the form of `clientId => JSON`
+        //     provider.awareness.getStates();
+        //     console.log(provider.awareness)
+        // })
     }
 
     return <Editor height="100vh" width="80vw" theme="vs-dark" onMount={handleEditorDidMount} />
