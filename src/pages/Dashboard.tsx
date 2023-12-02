@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
     addDoc,
     collection,
@@ -18,6 +19,7 @@ const RoomList = () => {
         roomName: '',
         password: '',
     })
+    const navigate = useNavigate()
 
     const getRooms = async () => {
         const userId = 'user2'
@@ -29,6 +31,10 @@ const RoomList = () => {
     }
 
     useEffect(() => {
+        let user = localStorage.getItem('logged_user')
+        if (user == null) {
+            navigate('/login')
+        }
         getRooms()
     }, [])
 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getAuth,  signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,14 @@ const Login = () => {
     })
     const navigate = useNavigate()
 
+    useEffect(()=>{
+        let user = localStorage.getItem("logged_user")
+        if (user != null){
+            navigate('/dashboard')
+        }
+    },[]);
+
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
@@ -15,10 +24,20 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('Login form submitted:', formData)
-        navigate('/dashboard')
-        // TODO Call na DB
-        // Add your authentication logic here
+
+        const auth = getAuth()
+        signInWithEmailAndPassword(auth, formData.email, formData.password)
+        .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            localStorage.setItem("logged_user",user.uid)
+            navigate('/dashboard')
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(error)
+        });
     }
 
     return (
