@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getAuth,  createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
+import { db } from '../main';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +12,13 @@ const RegisterForm = () => {
     })
     const navigate = useNavigate()
 
+    useEffect(()=>{
+        let user = localStorage.getItem("logged_user")
+        if (user != null){
+            navigate('/dashboard')
+        }
+    },[]);
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
@@ -16,8 +26,25 @@ const RegisterForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('Register form submitted:', formData)
-        // Add your registration logic here
+        
+        const auth = getAuth()
+        createUserWithEmailAndPassword(auth, formData.email, formData.password)
+        .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            localStorage.setItem("logged_user",user.uid)
+
+            setDoc(doc(db, "user", user.uid), {
+                username: formData.username,
+                email: formData.email
+              });
+            navigate('/dashboard')
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(error)
+        });
     }
 
     return (

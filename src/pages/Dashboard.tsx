@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const RoomList = () => {
-    // Example data for room list
+    
+    const navigate = useNavigate()
+    useEffect(()=>{
+        let user = localStorage.getItem("logged_user")
+        if (user == null){
+            navigate('/login')
+        }
+    },[]);
+
     const rooms = [
         {
             roomName: 'Living Room',
