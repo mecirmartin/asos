@@ -22,7 +22,7 @@ const RoomList = () => {
     const navigate = useNavigate()
 
     const getRooms = async () => {
-        const userId = 'user2'
+        const userId = localStorage.getItem('logged_user')
         const roomCollection = collection(db, 'room')
         const getRoomsQuery = query(roomCollection, where('users', 'array-contains', userId))
         const querySnapshot = await getDocs(getRoomsQuery)
@@ -38,14 +38,23 @@ const RoomList = () => {
         getRooms()
     }, [])
 
-    const addRoom = async () => {
+    const clearInputs = () =>
+        setFormData({
+            roomName: '',
+            password: '',
+        })
+
+    const addRoom = async (event) => {
+        event.preventDefault()
+        const userId = localStorage.getItem('logged_user')
         await addDoc(collection(db, 'room'), {
-            name: 'New room',
-            password: 'password',
+            name: formData?.roomName,
+            password: formData?.password,
             text: '',
-            users: ['user2'],
+            users: [userId],
         })
         getRooms()
+        clearInputs()
     }
 
     const writeText = async (roomId: string) => {
@@ -55,16 +64,34 @@ const RoomList = () => {
         getRooms()
     }
 
-    const joinRoom = async (roomId: string) => {
-        await updateDoc(doc(db, 'room', roomId), {
-            users: arrayUnion('ULTRA_USER'),
-        })
-        getRooms()
+    const joinRoom = async (event) => {
+        event.preventDefault()
+        const roomCollection = collection(db, 'room')
+        const getRoomsQuery = query(
+            roomCollection,
+            where('name', '==', formData?.roomName),
+            where('password', '==', formData?.password)
+        )
+        const querySnapshot = await getDocs(getRoomsQuery)
+        const roomId = querySnapshot.docs?.[0]?.id
+        if (roomId) {
+            const userId = localStorage.getItem('logged_user')
+            await updateDoc(doc(db, 'room', roomId), {
+                users: arrayUnion(userId),
+            })
+            getRooms()
+            clearInputs()
+        }
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
+    }
+
+    const logout = () => {
+        localStorage.removeItem('logged_user')
+        navigate('/login')
     }
 
     return (
@@ -73,11 +100,7 @@ const RoomList = () => {
                 {rooms.map((room, index) => (
                     <div key={index} style={styles.roomCard}>
                         <h3>{room.name}</h3>
-                        <ul style={styles.userList}>
-                            {room.users.map((user, userIndex) => (
-                                <li key={userIndex}>{user}</li>
-                            ))}
-                        </ul>
+                        <div>Number of users: {room.users.length}</div>
                     </div>
                 ))}
             </div>
@@ -106,14 +129,14 @@ const RoomList = () => {
                     <button style={styles.formButton} onClick={addRoom}>
                         Create Room
                     </button>
-                    <button
-                        style={styles.formButton}
-                        onClick={() => joinRoom('8c4jJIK93QVqSV9U48zA')}
-                    >
+                    <button style={styles.formButton} onClick={joinRoom}>
                         Join Room
                     </button>
                 </div>
             </form>
+            <button onClick={logout} style={styles.formButton}>
+                Logout
+            </button>
         </>
     )
 }
@@ -124,7 +147,7 @@ const styles = {
         flexDirection: 'column', // Stack cards vertically
         alignItems: 'center', // Center the cards horizontally
         width: '80%', // 80% of the viewport width
-        margin: 'auto', // Center the container
+        margin: '120px', // Center the container
     },
     roomCard: {
         width: '100%', // Cards take the full width of the container
