@@ -2,15 +2,15 @@ import { useState, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import Editor from '@monaco-editor/react'
 import * as Y from 'yjs'
-import { WebsocketProvider} from 'y-websocket'
+import { WebsocketProvider } from 'y-websocket'
 import { MonacoBinding } from 'y-monaco'
-import { WEBSOCKET_URL } from '/websocketConfig.js'; // Adjust the path as needed
+import { WEBSOCKET_URL } from '/websocketConfig.js' // Adjust the path as needed
 
 
 // Setup Monaco Editor
 // Attach YJS Text to Monaco Editor
 
-function App() {
+function App({ roomName }) {
     const editorRef = useRef(null)
 
     // Editor value -> YJS Text value (A text value shared by multiple people)
@@ -24,14 +24,14 @@ function App() {
         // Initialize YJS
         const doc = new Y.Doc() // a collection of shared objects -> Text
         // Connect to server (or start connection) with WebSocket
-        const provider = new WebsocketProvider(WEBSOCKET_URL,'asos-room', doc)
+        const provider = new WebsocketProvider(WEBSOCKET_URL, roomName, doc)
         const type = doc.getText('monaco') // doc { "monaco": "what our IDE is showing" }
         // Bind YJS to Monaco
         const binding = new MonacoBinding(
             type,
             editorRef.current.getModel(),
             new Set([editorRef.current]),
-            provider.awareness
+            provider.awareness,
         )
         //// tu sa zobrazuju informacie o aktualnom dokumente, userIds
         // console.log(provider.awareness)
@@ -46,7 +46,7 @@ function App() {
         // })
     }
 
-    return <Editor height="100vh" width="80vw" theme="vs-dark" onMount={handleEditorDidMount} />
+    return <Editor height='100vh' width='80vw' theme='vs-dark' onMount={handleEditorDidMount} />
 }
 
 export default App

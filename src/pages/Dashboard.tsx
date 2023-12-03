@@ -119,7 +119,7 @@ const RoomList = () => {
             </nav>
             <div style={styles.roomListContainer}>
                 {rooms.map((room, index) => (
-                    <div key={index} style={styles.roomCard}>
+                    <div key={index} style={styles.roomCard} onClick={() => navigate(`/editor/${room.name}/`)} >
                         <h3>{room.name}</h3>
                         <div>Number of users: {room.users.length}</div>
                     </div>
@@ -128,8 +128,8 @@ const RoomList = () => {
             <form style={styles.roomForm}>
                 <label style={styles.formLabel}>Room Name:</label>
                 <input
-                    type="text"
-                    name="roomName"
+                    type='text'
+                    name='roomName'
                     value={formData.roomName}
                     onChange={handleChange}
                     style={styles.formInput}
@@ -138,8 +138,8 @@ const RoomList = () => {
                 <br />
                 <label style={styles.formLabel}>Password:</label>
                 <input
-                    type="password"
-                    name="password"
+                    type='password'
+                    name='password'
                     value={formData.password}
                     onChange={handleChange}
                     style={styles.formInput}
@@ -174,6 +174,7 @@ const styles = {
         border: '1px solid #ccc',
         borderRadius: '8px',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        cursor: 'pointer'
     },
     userList: {
         listStyle: 'none',

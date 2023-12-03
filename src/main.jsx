@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         element: <Dashboard />,
     },
     {
-        path: '/editor',
+        path: '/editor/:roomName',
         element: <Editor />,
     },
 ])
