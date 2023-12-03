@@ -9,6 +9,7 @@ import {
     doc,
     updateDoc,
     arrayUnion,
+    getDoc,
 } from 'firebase/firestore'
 
 import { db } from '../main'
@@ -30,12 +31,27 @@ const RoomList = () => {
         setRooms(rooms)
     }
 
+    const getName = async (uid) =>{
+        const docRef = doc(db, "user", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          localStorage.setItem("logged_user_name",docSnap.data().username)
+          
+          if(document.getElementById("logged_in_p") != null){
+            document.getElementById("logged_in_p")!.innerHTML = "Logged in: "+docSnap.data().username
+          }
+        } 
+    }
+
     useEffect(() => {
         let user = localStorage.getItem('logged_user')
         if (user == null) {
             navigate('/login')
+        }else{
+            getName(user)
+            getRooms()
         }
-        getRooms()
+       
     }, [])
 
     const clearInputs = () =>
@@ -91,11 +107,16 @@ const RoomList = () => {
 
     const logout = () => {
         localStorage.removeItem('logged_user')
+        localStorage.removeItem('logged_user_name')
         navigate('/login')
     }
 
     return (
         <>
+            <nav style={styles.nav}>
+            <p id="logged_in_p">Logged in: {localStorage.getItem("logged_user")}</p>
+            <button style={styles.formButton} onClick={logout}>Logout</button>
+            </nav>
             <div style={styles.roomListContainer}>
                 {rooms.map((room, index) => (
                     <div key={index} style={styles.roomCard}>
@@ -134,9 +155,6 @@ const RoomList = () => {
                     </button>
                 </div>
             </form>
-            <button onClick={logout} style={styles.formButton}>
-                Logout
-            </button>
         </>
     )
 }
@@ -161,6 +179,20 @@ const styles = {
         listStyle: 'none',
         padding: 0,
     },
+    nav: {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        border: '0px 0px 0px 1px solid #ccc',
+        alignItems: "center",
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    },
+    
     roomForm: {
         width: '300px',
         margin: 'auto',
