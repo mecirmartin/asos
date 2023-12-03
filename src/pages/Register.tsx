@@ -33,6 +33,7 @@ const RegisterForm = () => {
             // Signed in
             const user = userCredential.user;
             localStorage.setItem("logged_user",user.uid)
+            localStorage.setItem("logged_user_name",formData.username)
 
             setDoc(doc(db, "user", user.uid), {
                 username: formData.username,
