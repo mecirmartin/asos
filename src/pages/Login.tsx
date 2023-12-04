@@ -37,6 +37,11 @@ const Login = () => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(error)
+            if(errorCode == "auth/invalid-credential"){
+                alert("Wrong email or password")
+            }else{
+                alert("Unexpected error: "+errorCode)
+            }
         });
     }
 
@@ -46,7 +51,8 @@ const Login = () => {
             <form style={styles.form} onSubmit={handleSubmit}>
                 <label style={styles.label}>
                     Email:
-                    <input
+                </label>
+                <input
                         type="email"
                         name="email"
                         value={formData.email}
@@ -54,11 +60,10 @@ const Login = () => {
                         style={styles.input}
                         required
                     />
-                </label>
-                <br />
                 <label style={styles.label}>
                     Password:
-                    <input
+                </label>
+                <input
                         type="password"
                         name="password"
                         value={formData.password}
@@ -66,11 +71,11 @@ const Login = () => {
                         style={styles.input}
                         required
                     />
-                </label>
                 <br />
                 <button type="submit" style={styles.button}>
                     Login
                 </button>
+                <br />
                 <button type="submit" style={styles.button} onClick={() => navigate('/register')}>
                     Register
                 </button>

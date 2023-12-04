@@ -44,7 +44,14 @@ const RegisterForm = () => {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(error)
+           
+            if(errorCode == "auth/email-already-in-use"){
+                alert("Email is already in use")
+            }else if (errorCode == "auth/weak-password"){
+                alert("Choose a stronger password")
+            }else{
+                alert("Unexpected error: "+errorCode)
+            }
         });
     }
 
@@ -54,7 +61,8 @@ const RegisterForm = () => {
             <form style={styles.form} onSubmit={handleSubmit}>
                 <label style={styles.label}>
                     Username:
-                    <input
+                </label>
+                <input
                         type="text"
                         name="username"
                         value={formData.username}
@@ -62,11 +70,10 @@ const RegisterForm = () => {
                         style={styles.input}
                         required
                     />
-                </label>
-                <br />
                 <label style={styles.label}>
                     Email:
-                    <input
+                </label>
+                <input
                         type="email"
                         name="email"
                         value={formData.email}
@@ -74,11 +81,10 @@ const RegisterForm = () => {
                         style={styles.input}
                         required
                     />
-                </label>
-                <br />
                 <label style={styles.label}>
                     Password:
-                    <input
+                </label>
+                <input
                         type="password"
                         name="password"
                         value={formData.password}
@@ -86,11 +92,11 @@ const RegisterForm = () => {
                         style={styles.input}
                         required
                     />
-                </label>
                 <br />
                 <button type="submit" style={styles.button}>
                     Register
                 </button>
+                <br />
                 <button type="submit" style={styles.button} onClick={() => navigate('/login')}>
                     Login
                 </button>

@@ -37,6 +37,10 @@ const router = createBrowserRouter([
         path: '/editor/:roomName',
         element: <Editor />,
     },
+    {
+        path: '/',
+        element: <Login />,
+    }
 ])
 
 export const app = initializeApp(firebaseConfig)

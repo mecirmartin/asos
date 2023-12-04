@@ -46,7 +46,7 @@ function App({ roomName }) {
         // })
     }
 
-    return <Editor height='100vh' width='80vw' theme='vs-dark' onMount={handleEditorDidMount} />
+    return <Editor height='100vh' width='98vw' theme='vs-dark' onMount={handleEditorDidMount} />
 }
 
 export default App
